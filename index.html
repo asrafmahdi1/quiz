@@ -1,63 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>QuizEarner | Login</title>
+<title>QuizSite - লগইন</title>
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>QuizEarner</h1>
-    <h2>Login or Sign Up</h2>
-
-    <input type="text" id="username" placeholder="Enter username" autocomplete="off" />
-    <input type="text" id="referral" placeholder="Referral code (optional)" autocomplete="off" />
-
-    <button id="loginBtn">Continue</button>
-    <p id="msg" class="msg"></p>
-
-    <p style="margin-top: 30px; font-size: 14px; color: #ccc;">
-      Invite friends with your referral code and earn coins!
-    </p>
+  <div class="container login-container">
+    <h1>QuizSite - লগইন</h1>
+    <input id="username" placeholder="তোমার ইউজারনেম লিখো" />
+    <input id="referral" placeholder="রেফারাল কোড (ঐচ্ছিক)" />
+    <button id="loginBtn">লগইন করো</button>
   </div>
 
-<script>
-  // Simple login + referral system using localStorage
-  document.getElementById('loginBtn').onclick = () => {
-    let username = document.getElementById('username').value.trim();
-    let referral = document.getElementById('referral').value.trim();
-
-    if(!username) {
-      document.getElementById('msg').textContent = 'Please enter a username.';
-      return;
-    }
-
-    let users = JSON.parse(localStorage.getItem('users') || '{}');
-    if(!users[username]) {
-      // New user signup
-      users[username] = {
-        coins: 0,
-        referrals: 0,
-        referralCode: username.toLowerCase(),
-      };
-      localStorage.setItem('users', JSON.stringify(users));
-
-      // Referral bonus if valid
-      if(referral && users[referral]) {
-        users[referral].coins += 10;
-        users[referral].referrals++;
-        localStorage.setItem('users', JSON.stringify(users));
-        alert(`Referral bonus given to ${referral}!`);
+  <script>
+    // ইউজার ডাটা লোকালস্টোরেজে সেভ করার ফাংশন
+    function saveUser(username, referral) {
+      let users = JSON.parse(localStorage.getItem('users') || '{}');
+      if(!users[username]) {
+        users[username] = { coins: 10 }; // নতুন ইউজারকে ১০ কয়েন দাও
+        // রেফারাল থাকলে ৫ কয়েন যোগ করো রেফারারকে ও রেফারিকে
+        if(referral && users[referral]) {
+          users[referral].coins += 5;
+          users[username].coins += 5;
+        }
       }
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('currentUser', username);
     }
 
-    // Save logged-in user
-    localStorage.setItem('currentUser', username);
-
-    window.location.href = 'quiz.html';
-  };
-</script>
-
+    document.getElementById('loginBtn').onclick = () => {
+      const username = document.getElementById('username').value.trim();
+      const referral = document.getElementById('referral').value.trim();
+      if(username === '') {
+        alert('ইউজারনেম দিতে হবে');
+        return;
+      }
+      saveUser(username, referral);
+      alert('লগইন সফল! এখন কুইজ খেলো');
+      location.href = 'quiz.html';
+    }
+  </script>
 </body>
 </html>
