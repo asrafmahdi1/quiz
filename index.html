@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QuizEarner | Login</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>QuizEarner</h1>
+    <h2>Login or Sign Up</h2>
+
+    <input type="text" id="username" placeholder="Enter username" autocomplete="off" />
+    <input type="text" id="referral" placeholder="Referral code (optional)" autocomplete="off" />
+
+    <button id="loginBtn">Continue</button>
+    <p id="msg" class="msg"></p>
+
+    <p style="margin-top: 30px; font-size: 14px; color: #ccc;">
+      Invite friends with your referral code and earn coins!
+    </p>
+  </div>
+
+<script>
+  // Simple login + referral system using localStorage
+  document.getElementById('loginBtn').onclick = () => {
+    let username = document.getElementById('username').value.trim();
+    let referral = document.getElementById('referral').value.trim();
+
+    if(!username) {
+      document.getElementById('msg').textContent = 'Please enter a username.';
+      return;
+    }
+
+    let users = JSON.parse(localStorage.getItem('users') || '{}');
+    if(!users[username]) {
+      // New user signup
+      users[username] = {
+        coins: 0,
+        referrals: 0,
+        referralCode: username.toLowerCase(),
+      };
+      localStorage.setItem('users', JSON.stringify(users));
+
+      // Referral bonus if valid
+      if(referral && users[referral]) {
+        users[referral].coins += 10;
+        users[referral].referrals++;
+        localStorage.setItem('users', JSON.stringify(users));
+        alert(`Referral bonus given to ${referral}!`);
+      }
+    }
+
+    // Save logged-in user
+    localStorage.setItem('currentUser', username);
+
+    window.location.href = 'quiz.html';
+  };
+</script>
+
+</body>
+</html>
